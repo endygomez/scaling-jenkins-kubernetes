@@ -66,9 +66,11 @@ Arch Linux
 sudo pacman -Syu mkcert
 ```
 
-2 - Generar certificado para Jenkins (local)con MKCert
+2 - Generar certificado para Jenkins (local) con MKCert
 
 ```
+mkdir certificate
+cd certificate
 mkcert jenkins.localhost.dev '*.localhost.dev' localhost 127.0.0.1 ::1
 ```
 
