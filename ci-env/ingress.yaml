@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ci-ingress
+  namespace: ci
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+    - jenkins.localhost.dev
+    secretName: jenkins-dev-certificate
+  rules:
+  - host: jenkins.localhost.dev
+    http:
+      paths:
+      - backend:
+          serviceName: jenkins-ui
+          servicePort: http-port

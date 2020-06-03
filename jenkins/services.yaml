@@ -1,0 +1,29 @@
+---
+  kind: Service
+  apiVersion: v1
+  metadata:
+    name: jenkins-ui
+    namespace: ci
+  spec:
+    type: NodePort
+    selector:
+      app: jenkins
+    ports:
+    - port: 80
+      targetPort: http-port
+      name: http-port
+---
+  kind: Service
+  apiVersion: v1
+  metadata:
+    name: jenkins-discovery
+    namespace: ci
+  spec:
+    type: NodePort
+    selector:
+      app: jenkins
+    ports:
+    - port: 50000
+      targetPort: slave-port
+      nodePort: 31582
+      name: slave-port

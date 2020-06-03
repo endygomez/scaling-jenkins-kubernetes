@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: ci
+  labels:
+    app: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - name: jenkins
+        #image: gomezendy/jenkins:scaling_kubernetes
+        image: jenkins/jenkins:lts
+        ports:
+          - containerPort: 8080
+            name: http-port
+          - containerPort: 50000
+            name: slave-port
+        env:
+          - name: JAVA_OPTS
+            value: -Dhudson.TcpSlaveAgentListener.hostName=jenkins-discovery.ci.svc.cluster.local -Dhudson.TcpSlaveAgentListener.port=50000
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: "0.5"
+            memory: 500Mi          
+        volumeMounts:
+            - mountPath: /var/jenkins_home
+              #subPath: jenkins_home
+              name: jenkins-home
+            - name: dockersock
+              mountPath: "/var/run/docker.sock"
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 0
+      volumes:
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-pv-claim
+        - name: dockersock
+          hostPath:
+            path: /var/run/docker.sock
